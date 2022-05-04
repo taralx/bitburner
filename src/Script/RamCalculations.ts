@@ -8,24 +8,14 @@
 import * as walk from "acorn-walk";
 import acorn, { parse } from "acorn";
 
-import { RamCalculationErrorCode } from "./RamCalculationErrorCodes";
+import { RamCalculation, RamCalculationErrorCode, RamUsageEntry } from "./RamCalculationTypes";
 
 import { RamCosts, RamCostConstants } from "../Netscript/RamCostGenerator";
 import { Script } from "./Script";
 import { WorkerScript } from "../Netscript/WorkerScript";
 import { areImportsEquals } from "../Terminal/DirectoryHelpers";
 import { IPlayer } from "../PersonObjects/IPlayer";
-
-export interface RamUsageEntry {
-  type: "ns" | "dom" | "fn" | "misc";
-  name: string;
-  cost: number;
-}
-
-export interface RamCalculation {
-  cost: number;
-  entries?: RamUsageEntry[];
-}
+import { ramCost as tsRamCost } from "../NetscriptTSEvaluator";
 
 // These special strings are used to reference the presence of a given logical
 // construct within a user script.
@@ -419,9 +409,14 @@ function parseOnlyCalculateDeps(code: string, currentModule: string): any {
  */
 export async function calculateRamUsage(
   player: IPlayer,
+  scriptName: string,
   codeCopy: string,
   otherScripts: Script[],
 ): Promise<RamCalculation> {
+  if (scriptName.endsWith(".ts")) {
+    return tsRamCost(player, scriptName, codeCopy, otherScripts);
+  }
+
   // We don't need a real WorkerScript for this. Just an object that keeps
   // track of whatever's needed for RAM calculations
   const workerScript = {

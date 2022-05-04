@@ -39,6 +39,7 @@ module.exports = (env, argv) => {
     entry: {
       main: "./src/index.tsx",
     },
+    ignoreWarnings: [{ module: /node_modules\/typescript\/lib\/typescript\.js$/ }],
     mode: isDevelopment ? "development" : "production",
     module: {
       rules: [

@@ -6,12 +6,22 @@ import { TabData, useTemporaryTab } from "./TabData";
 import { loadThemes, makeTheme, sanitizeTheme } from "./themes";
 import { CodeEditor } from "./Types";
 
+export const nsLib = netscriptLib.replace(/export /g, "declare ");
+
 let monacoInitComplete = false;
 function monacoOneTimeInit(): void {
     if (monacoInitComplete) return;
     // It's important that the "export" keyword not show up or TS will not treat the module as ambient.
     // TODO: Do this via SourceFile manipulation instead.
-    monaco.languages.typescript.javascriptDefaults.addExtraLib(netscriptLib.replace(/export /g, ""));
+    monaco.languages.typescript.javascriptDefaults.addExtraLib(nsLib);
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(nsLib, "lib:///netscript/index.d.ts");
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        allowJs: true,
+        module: monaco.languages.typescript.ModuleKind.AMD,
+        target: monaco.languages.typescript.ScriptTarget.ES2019,
+        typeRoots: ["lib:///"],
+        types: ["netscript"],
+    });
     loadThemes(monaco);
     sanitizeTheme(Settings.EditorTheme);
     monaco.editor.defineTheme("customTheme", makeTheme(Settings.EditorTheme));

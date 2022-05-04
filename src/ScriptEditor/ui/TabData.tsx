@@ -16,6 +16,10 @@ export class TabData {
         } else if (uri.path.endsWith(".js") || uri.path.endsWith(".ns")) {
             defaultCode = "/** @param {NS} ns */\nexport async function main(ns) {\n    \n}";
             defaultCursor = { column: 5, lineNumber: 3 };
+        } else if (uri.path.endsWith(".ts")) {
+            language = "typescript";
+            defaultCode = "export async function main(ns: NS): Promise<void> {\n    \n}";
+            defaultCursor = { column: 5, lineNumber: 2 };
         }
         this.model = monaco.editor.createModel(code ?? defaultCode, language, uri);
         this.dirty = false;

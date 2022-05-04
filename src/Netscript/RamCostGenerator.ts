@@ -319,7 +319,7 @@ const grafting: IMap<any> = {
   graftAugmentation: 7.5,
 };
 
-export const RamCosts: IMap<any> = {
+export const RamCosts: IMap<number | ((player: IPlayer) => number) | IMap<number | ((player: IPlayer) => number)>> = {
   hacknet,
   stock,
   singularity,
@@ -452,8 +452,7 @@ export function getRamCost(player: IPlayer, ...args: string[]): number {
       return 0;
     }
 
-    const currType = typeof curr;
-    if (currType === "function" || currType === "number") {
+    if (typeof curr !== "object") {
       break;
     }
 

@@ -37,6 +37,7 @@ import { areFilesEqual } from "./Terminal/DirectoryHelpers";
 import { Player } from "./Player";
 import { Terminal } from "./Terminal";
 import { IPlayer } from "./PersonObjects/IPlayer";
+import { execute as executeTSScript } from "./NetscriptTSEvaluator"
 
 // Netscript Ports are instantiated here
 export const NetscriptPorts: IPort[] = [];
@@ -60,7 +61,7 @@ export function prestigeWorkerScripts(): void {
 // JS script promises need a little massaging to have the same guarantees as netscript
 // promises. This does said massaging and kicks the script off. It returns a promise
 // that resolves or rejects when the corresponding worker script is done.
-function startNetscript2Script(player: IPlayer, workerScript: WorkerScript): Promise<void> {
+async function startNetscript2Script(player: IPlayer, workerScript: WorkerScript): Promise<void> {
   workerScript.running = true;
 
   // The name of the currently running netscript function, to prevent concurrent
@@ -136,13 +137,13 @@ function startNetscript2Script(player: IPlayer, workerScript: WorkerScript): Pro
 
   // Note: the environment that we pass to the JS script only needs to contain the functions visible
   // to that script, which env.vars does at this point.
-  return new Promise<void>((resolve, reject) => {
-    executeJSScript(player, workerScript.getServer().scripts, workerScript)
-      .then(() => {
-        resolve();
-      })
-      .catch((e) => reject(e));
-  }).catch((e) => {
+  try {
+    if (workerScript.name.endsWith(".ts")) {
+      await executeTSScript(workerScript);
+    } else {
+      await executeJSScript(player, workerScript.getServer().scripts, workerScript);
+    }
+  } catch (e) {
     if (e instanceof Error) {
       if (e instanceof SyntaxError) {
         workerScript.errorMessage = makeRuntimeRejectMsg(workerScript, e.message + " (sorry we can't be more helpful)");
@@ -163,7 +164,7 @@ function startNetscript2Script(player: IPlayer, workerScript: WorkerScript): Pro
     // Don't know what to do with it, let's try making an error message out of it
     workerScript.errorMessage = makeRuntimeRejectMsg(workerScript, "" + e);
     throw new ScriptDeath(workerScript);
-  });
+  }
 }
 
 function startNetscript1Script(workerScript: WorkerScript): Promise<void> {
@@ -564,13 +565,13 @@ function createAndAddWorkerScript(
 
   // Start the script's execution
   let scriptExecution: Promise<void> | null = null; // Script's resulting promise
-  if (workerScript.name.endsWith(".js") || workerScript.name.endsWith(".ns")) {
-    scriptExecution = startNetscript2Script(player, workerScript);
-  } else {
+  if (workerScript.name.endsWith(".script")) {
     scriptExecution = startNetscript1Script(workerScript);
     if (!(scriptExecution instanceof Promise)) {
       return false;
     }
+  } else {
+    scriptExecution = startNetscript2Script(player, workerScript);
   }
 
   // Once the code finishes (either resolved or rejected, doesnt matter), set its

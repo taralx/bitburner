@@ -60,7 +60,7 @@ export function resolveNetscriptRequestedThreads(
   return requestedThreadsAsInt;
 }
 
-export function isScriptErrorMessage(msg: string): boolean {
+export function isScriptErrorMessage(msg: unknown): msg is string {
   if (!isString(msg)) {
     return false;
   }
