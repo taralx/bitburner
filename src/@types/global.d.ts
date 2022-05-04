@@ -16,3 +16,8 @@ declare module "!!raw-loader!*" {
 declare interface Document {
   achievements: string[];
 }
+
+declare module "tslib:*" {
+  const _default: string;
+  export default _default;
+}

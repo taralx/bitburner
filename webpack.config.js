@@ -21,6 +21,10 @@ module.exports = (env, argv) => {
   // https://stackoverflow.com/a/38401256
   const commitHash = require("child_process").execSync("git rev-parse --short HEAD").toString().trim();
 
+  if (!("ContainsDynamicImport" in require("typescript").TransformFlags)) {
+    throw new Error("typescript library missing TransformFlags.ContainsDynamicImport");
+  }
+
   return {
     context: __dirname,
     devServer: {
@@ -56,6 +60,11 @@ module.exports = (env, argv) => {
         {
           test: /\.(png|jpe?g|gif|jp2|ttf|webp)$/,
           type: "asset",
+        },
+        {
+          scheme: "tslib",
+          loader: "./tools/tslib-loader.js",
+          type: "asset/source",
         },
       ],
     },
