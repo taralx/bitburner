@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      zIndex: 999999,
     },
     paper: {
       backgroundColor: theme.palette.background.default,
