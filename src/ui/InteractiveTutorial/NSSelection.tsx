@@ -1,12 +1,7 @@
-import Editor from "@monaco-editor/react";
 import { Tab, Tabs, Typography } from "@mui/material";
 import React from "react";
-
+import { UncontrolledEditor } from "src/ScriptEditor/ui/Editor";
 import { Modal } from "../React/Modal";
-
-import * as monaco from "monaco-editor";
-
-type IStandaloneCodeEditor = monaco.editor.IStandaloneCodeEditor;
 
 interface IProps {
   open: boolean;
@@ -30,10 +25,6 @@ export function NSSelection(props: IProps): React.ReactElement {
     setValue(tab);
   }
 
-  function onMount(editor: IStandaloneCodeEditor): void {
-    editor.updateOptions({ readOnly: true });
-  }
-
   return (
     <Modal open={props.open} onClose={props.onClose}>
       <Tabs variant="fullWidth" value={value} onChange={handleChange}>
@@ -48,14 +39,16 @@ export function NSSelection(props: IProps): React.ReactElement {
             beginner to programming.
           </Typography>
           <Typography>Example script using NS1:</Typography>
-          <Editor
-            loading={<></>}
-            defaultLanguage="javascript"
-            defaultValue={ns1Example}
-            height={`${300}px`}
-            theme={"vs-dark"}
-            onMount={onMount}
-            options={{ fontSize: 30 }}
+          <UncontrolledEditor
+            initialCode={ns1Example}
+            style={{
+              height: "300px",
+            }}
+            options={{
+              fontSize: 30,
+              readOnly: true,
+              theme: "vs-dark",
+            }}
           />
         </>
       )}
@@ -67,13 +60,16 @@ export function NSSelection(props: IProps): React.ReactElement {
             might want to read up on them a little bit before diving in.
           </Typography>
           <Typography>Example script using NS2:</Typography>
-          <Editor
-            loading={<></>}
-            defaultLanguage="javascript"
-            defaultValue={ns2Example}
-            height={`${300}px`}
-            theme={"vs-dark"}
-            options={{ fontSize: 30 }}
+          <UncontrolledEditor
+            initialCode={ns2Example}
+            style={{
+              height: "300px",
+            }}
+            options={{
+              fontSize: 30,
+              readOnly: true,
+              theme: "vs-dark",
+            }}
           />
         </>
       )}

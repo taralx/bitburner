@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const webpack = require("webpack");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
@@ -103,6 +104,9 @@ module.exports = (env, argv) => {
         },
       }),
       new MiniCssExtractPlugin(),
+      new MonacoWebpackPlugin({
+        languages: ["javascript", "typescript"],
+      }),
       new ForkTsCheckerWebpackPlugin({
         typescript: {
           diagnosticOptions: {
@@ -123,6 +127,8 @@ module.exports = (env, argv) => {
     ].filter(Boolean),
     resolve: {
       alias: {
+        // Don't load editor.main.js, as we ship a subset of monaco.
+        "monaco-editor$": "monaco-editor/esm/vs/editor/editor.api.js",
         // It's always nice when you don't have to use relative paths everywhere.
         "src": path.resolve(__dirname, "src/"),
       },

@@ -1,6 +1,8 @@
+import * as monaco from "monaco-editor";
+
 export interface IScriptEditorTheme {
   [key: string]: any;
-  base: string;
+  base: monaco.editor.BuiltinTheme;
   inherit: boolean;
   common: {
     [key: string]: string;

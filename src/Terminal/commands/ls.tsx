@@ -1,7 +1,6 @@
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
-import { toString } from "lodash";
 import React from "react";
 import { IPlayer } from "../../PersonObjects/IPlayer";
 import { BaseServer } from "../../Server/BaseServer";
@@ -11,6 +10,7 @@ import { ITerminal } from "../ITerminal";
 import * as libarg from "arg";
 import { showLiterature } from "../../Literature/LiteratureHelpers";
 import { MessageFilenames, showMessage } from "../../Message/MessageHelpers";
+import { tabManager } from "../../ScriptEditor/ui/NewScriptEditor";
 
 export function ls(
   terminal: ITerminal,
@@ -155,8 +155,12 @@ export function ls(
       }
       if (filename.startsWith("/")) filename = filename.slice(1);
       const filepath = terminal.getFilepath(`${prefix}${filename}`);
-      const code = toString(terminal.getScript(player, filepath)?.code);
-      router.toScriptEditor({ [filepath]: code });
+      const script = terminal.getScript(player, filepath);
+      if (script == null) {
+        return terminal.error(`File no longer exists`);
+      }
+      tabManager.openScript(script);
+      router.toScriptEditor();
     }
 
     return (

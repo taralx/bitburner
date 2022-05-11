@@ -15,7 +15,6 @@ import { staneksGift } from "./CotMG/Helper";
 import { processPassiveFactionRepGain, inviteToFaction } from "./Faction/FactionHelpers";
 import { Router } from "./ui/GameRoot";
 import { Page } from "./ui/Router";
-import { SetupTextEditor } from "./ScriptEditor/ui/ScriptEditorRoot";
 
 import {
   getHackingWorkRepGain,
@@ -449,7 +448,6 @@ const Engine: {
       // Start interactive tutorial
       iTutorialStart();
     }
-    SetupTextEditor();
   },
 
   start: function () {

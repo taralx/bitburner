@@ -13,7 +13,15 @@ export const PromptEvent = new EventEmitter<[Prompt]>();
 interface Prompt {
   txt: string;
   options?: { type?: string; choices?: string[] };
-  resolve: (result: boolean | string) => void;
+  resolve: (result: boolean | string, dismissed: boolean) => void;
+}
+
+/** Prompts the user for a yes/no choice. Returns undefined if the dialog is dismissed. */
+export function prompt(txt: string): Promise<boolean | undefined> {
+  return new Promise(resolve => PromptEvent.emit({
+    txt,
+    resolve(res, dis) { resolve(dis ? undefined : res as boolean) },
+  }));
 }
 
 export function PromptManager(): React.ReactElement {
@@ -31,9 +39,9 @@ export function PromptManager(): React.ReactElement {
   function close(): void {
     if (prompt === null) return;
     if (["text", "select"].includes(prompt?.options?.type ?? "")) {
-      prompt.resolve("");
+      prompt.resolve("", true);
     } else {
-      prompt.resolve(false);
+      prompt.resolve(false, true);
     }
     setPrompt(null);
   }
@@ -47,7 +55,7 @@ export function PromptManager(): React.ReactElement {
   if (prompt?.options?.type && ["text", "select"].includes(prompt?.options?.type))
     PromptContent = types[prompt?.options?.type];
   const resolve = (value: boolean | string): void => {
-    prompt.resolve(value);
+    prompt.resolve(value, false);
     setPrompt(null);
   };
 

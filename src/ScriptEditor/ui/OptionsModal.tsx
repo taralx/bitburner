@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Options, WordWrapOptions } from "./Options";
 import { Modal } from "../../ui/React/Modal";
-
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -11,14 +9,24 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-
 import { ThemeEditorModal } from "./ThemeEditorModal";
+import { EditorOptions } from "./Editor";
+
+type WordWrapOptions = "off" | "on" | "wordWrapColumn" | "bounded";
+
+export interface Options extends EditorOptions {
+  theme: string;
+  insertSpaces: boolean;
+  fontSize: number;
+  wordWrap: WordWrapOptions;
+}
 
 interface IProps {
-  options: Options;
-  save: (options: Options) => void;
-  onClose: () => void;
   open: boolean;
+  onClose: () => void;
+  options: Options;
+  vim: boolean;
+  save: (options: Options, vim: boolean) => void;
 }
 
 export function OptionsModal(props: IProps): React.ReactElement {
@@ -26,24 +34,23 @@ export function OptionsModal(props: IProps): React.ReactElement {
   const [insertSpaces, setInsertSpaces] = useState(props.options.insertSpaces);
   const [fontSize, setFontSize] = useState(props.options.fontSize);
   const [wordWrap, setWordWrap] = useState(props.options.wordWrap);
-  const [vim, setVim] = useState(props.options.vim);
+  const [vim, setVim] = useState(props.vim);
   const [themeEditorOpen, setThemeEditorOpen] = useState(false);
 
   function save(): void {
     props.save({
+      ...props.options,
       theme,
       insertSpaces,
       fontSize,
       wordWrap,
-      vim,
-    });
+    }, vim);
     props.onClose();
   }
 
   function onFontChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    const f = parseFloat(event.target.value);
-    if (isNaN(f)) return;
-    setFontSize(f);
+    const f = Number(event.target.value);
+    if (isFinite(f)) setFontSize(f);
   }
 
   return (

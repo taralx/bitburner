@@ -71,7 +71,7 @@ export function ThemeEditorModal(props: IProps): React.ReactElement {
   }
 
   // Need to deep copy the object since it has nested attributes
-  const [themeCopy, setThemeCopy] = useState<IScriptEditorTheme>(JSON.parse(JSON.stringify(Settings.EditorTheme)));
+  const [themeCopy, setThemeCopy] = useState<IScriptEditorTheme>(structuredClone(Settings.EditorTheme));
 
   function onColorChange(name: string, value: string): void {
     setThemeCopy(_.set(themeCopy, name, value));

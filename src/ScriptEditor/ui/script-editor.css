@@ -1,0 +1,73 @@
+.script-editor-root,
+.script-editor-empty {
+    contain: size;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.script-editor-empty {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.script-editor {
+    contain: size;
+    flex: 1;
+}
+
+.script-editor-tabs {
+    display: flex;
+    gap: 5px;
+    overflow-x: scroll;
+    margin-bottom: 8px;
+}
+
+.script-editor-tabs.drag-active {
+    background-color: var(--backgroundsecondary);
+}
+
+.script-editor-tab {
+    background-color: var(--button);
+    display: flex;
+    min-width: 8em;
+    white-space: nowrap;
+}
+
+/* Disable the on-hover background color change. */
+.script-editor-tab button,
+.script-editor-tab button:hover {
+    background-color: inherit;
+    border: 0;
+}
+
+.script-editor-tab.tab-not-active button {
+    background-color: var(--backgroundsecondary);
+    color: var(--secondary);
+}
+
+.script-editor-tab button.icon-button {
+    min-width: initial;
+    padding: 2px;
+}
+
+.script-editor-tab-title {
+    /* direction: rtl means we see ...end instead of start... */
+    direction: rtl;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.script-editor-status {
+    padding: 8px;
+}
+
+.script-editor-buttons {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}

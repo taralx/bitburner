@@ -392,6 +392,7 @@ module.exports = {
           },
         ],
         "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-namespace": ["error", { "allowDeclarations": true }],
         "@typescript-eslint/no-use-before-define": "off",
       },
     },

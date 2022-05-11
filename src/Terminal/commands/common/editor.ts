@@ -1,12 +1,12 @@
 import { ITerminal } from "../../ITerminal";
 import { removeLeadingSlash, removeTrailingSlash } from "../../DirectoryHelpers";
-import { IRouter, ScriptEditorRouteOptions } from "../../../ui/Router";
+import { IRouter } from "../../../ui/Router";
 import { IPlayer } from "../../../PersonObjects/IPlayer";
 import { BaseServer } from "../../../Server/BaseServer";
 import { isScriptFilename } from "../../../Script/isScriptFilename";
-import { CursorPositions } from "../../../ScriptEditor/CursorPositions";
 import { Script } from "../../../Script/Script";
 import { isEmpty } from "lodash";
+import { tabManager } from "../../../ScriptEditor/ui/NewScriptEditor";
 
 interface EditorParameters {
   terminal: ITerminal;
@@ -16,14 +16,6 @@ interface EditorParameters {
   args: (string | number | boolean)[];
 }
 
-function isNs2(filename: string): boolean {
-  return filename.endsWith(".ns") || filename.endsWith(".js");
-}
-
-const newNs2Template = `/** @param {NS} ns */
-export async function main(ns) {
-
-}`;
 
 interface ISimpleScriptGlob {
   glob: string;
@@ -96,7 +88,6 @@ function parseSimpleScriptGlob(globString: string, globDatabase: Script[], termi
 export function commonEditor(
   command: string,
   { terminal, router, player, args }: EditorParameters,
-  scriptEditorRouteOptions?: ScriptEditorRouteOptions,
 ): void {
   if (args.length < 1) {
     terminal.error(`Incorrect usage of ${command} command. Usage: ${command} [scriptname]`);
@@ -111,41 +102,35 @@ export function commonEditor(
       filesToLoadOrCreate = globSearch.globMatches;
     }
 
-    const files = filesToLoadOrCreate.map((arg) => {
-      const filename = `${arg}`;
+    const files = filesToLoadOrCreate.map((arg): [string, string?] => {
+      const filename = arg.toString();
 
       if (isScriptFilename(filename)) {
         const filepath = terminal.getFilepath(filename);
         const script = terminal.getScript(player, filename);
-        const fileIsNs2 = isNs2(filename);
-        const code = script !== null ? script.code : fileIsNs2 ? newNs2Template : "";
-
-        if (code === newNs2Template) {
-          CursorPositions.saveCursor(filename, {
-            row: 3,
-            column: 5,
-          });
-        }
-
-        return [filepath, code];
+        return [filepath, script?.code];
       }
 
       if (filename.endsWith(".txt")) {
         const filepath = terminal.getFilepath(filename);
         const txt = terminal.getTextFile(player, filename);
-        return [filepath, txt === null ? "" : txt.text];
+        return [filepath, txt?.text];
       }
 
       throw new Error(
         `Invalid file. Only scripts (.script, .ns, .js), or text files (.txt) can be edited with ${command}`,
       );
     });
+    const server = player.getCurrentServer().hostname;
+    for (const [filepath, code] of files) {
+      tabManager.open(server, filepath, code);
+    }
 
     if (globSearch && files.length === 0) {
       throw new Error(`Could not find any valid files to open with ${command} using glob: \`${globSearch.glob}\``);
     }
 
-    router.toScriptEditor(Object.fromEntries(files), scriptEditorRouteOptions);
+    router.toScriptEditor();
   } catch (e) {
     terminal.error(`${e}`);
   }

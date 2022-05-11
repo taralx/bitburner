@@ -33,7 +33,7 @@ import createStyles from "@mui/styles/createStyles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { Page, IRouter, ScriptEditorRouteOptions } from "./Router";
+import { Page, IRouter } from "./Router";
 import { Overview } from "./React/Overview";
 import { SidebarRoot } from "../Sidebar/ui/SidebarRoot";
 import { AugmentationsRoot } from "../Augmentation/ui/AugmentationsRoot";
@@ -50,7 +50,7 @@ import { HacknetRoot } from "../Hacknet/ui/HacknetRoot";
 import { GenericLocation } from "../Locations/ui/GenericLocation";
 import { LocationCity } from "../Locations/ui/City";
 import { ProgramsRoot } from "../Programs/ui/ProgramsRoot";
-import { Root as ScriptEditorRoot } from "../ScriptEditor/ui/ScriptEditorRoot";
+import { Root as ScriptEditor } from "../ScriptEditor/ui/NewScriptEditor";
 import { MilestonesRoot } from "../Milestones/ui/MilestonesRoot";
 import { TerminalRoot } from "../Terminal/ui/TerminalRoot";
 import { TutorialRoot } from "../Tutorial/ui/TutorialRoot";
@@ -160,7 +160,6 @@ function determineStartPage(player: IPlayer): Page {
 
 export function GameRoot({ player, engine, terminal }: IProps): React.ReactElement {
   const classes = useStyles();
-  const [{ files, vim }, setEditorOptions] = useState({ files: {}, vim: false });
   const [page, setPage] = useState(determineStartPage(player));
   const setRerender = useState(0)[1];
   const [augPage, setAugPage] = useState<boolean>(false);
@@ -228,13 +227,7 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
     toHacknetNodes: () => setPage(Page.Hacknet),
     toMilestones: () => setPage(Page.Milestones),
     toGrafting: () => setPage(Page.Grafting),
-    toScriptEditor: (files: Record<string, string>, options?: ScriptEditorRouteOptions) => {
-      setEditorOptions({
-        files,
-        vim: !!options?.vim,
-      });
-      setPage(Page.ScriptEditor);
-    },
+    toScriptEditor: () => setPage(Page.ScriptEditor),
     toSleeves: () => setPage(Page.Sleeves),
     toStockMarket: () => setPage(Page.StockMarket),
     toTerminal: () => setPage(Page.Terminal),
@@ -367,15 +360,7 @@ export function GameRoot({ player, engine, terminal }: IProps): React.ReactEleme
       break;
     }
     case Page.ScriptEditor: {
-      mainPage = (
-        <ScriptEditorRoot
-          files={files}
-          hostname={player.getCurrentServer().hostname}
-          player={player}
-          router={Router}
-          vim={vim}
-        />
-      );
+      mainPage = <ScriptEditor />;
       break;
     }
     case Page.ActiveScripts: {
