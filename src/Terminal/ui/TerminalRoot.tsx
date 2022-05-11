@@ -330,9 +330,7 @@ export function TerminalRoot({ terminal, router, player }: IProps): React.ReactE
             if (item instanceof Output)
               return (
                 <ListItem key={i} classes={{ root: classes.nopadding }}>
-                  <Typography classes={{ root: lineClass(item.color) }} paragraph={false}>
-                    {parseOutputText(item)}
-                  </Typography>
+                  {parseOutputText(item)}
                 </ListItem>
               );
             if (item instanceof RawOutput)
