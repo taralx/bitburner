@@ -1,3 +1,4 @@
-last 8 versions
+# TODO: add "supports css-containment" when that doesn't exclude most Safari users.
+last 8 versions, Firefox ESR and supports flexbox-gap
 not dead
 not ie <= 11

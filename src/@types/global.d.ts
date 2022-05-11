@@ -7,6 +7,11 @@ declare module "*.png" {
   export default value;
 }
 
+declare module "!!raw-loader!*" {
+  const contents: string;
+  export default contents;
+}
+
 // Achievements communicated back to Electron shell for Steam.
 declare interface Document {
   achievements: string[];
