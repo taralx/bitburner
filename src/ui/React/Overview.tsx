@@ -116,9 +116,9 @@ export function Overview({ children, mode }: IProps): React.ReactElement {
   if (router.page() === Page.BitVerse || router.page() === Page.Loading || router.page() === Page.Recovery)
     return <></>;
   return (
-    <Draggable handle=".drag" bounds="body" onStop={handleStop} defaultPosition={{ x, y }}>
-      <Paper className={classes.overviewContainer} square>
-        <Box className="drag" onDoubleClick={() => setOpen((old) => !old)} ref={draggableRef}>
+    <Draggable handle=".drag" bounds="body" onStop={handleStop} defaultPosition={{ x, y }} nodeRef={draggableRef}>
+      <Paper className={classes.overviewContainer} square ref={draggableRef}>
+        <Box className="drag" onDoubleClick={() => setOpen((old) => !old)}>
           <Box className={classes.header}>
             <LeftIcon color="secondary" className={classes.icon} sx={{ padding: "2px" }} />
             <Typography flexGrow={1} color="secondary">

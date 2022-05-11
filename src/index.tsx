@@ -17,9 +17,11 @@ ReactDOM.render(
 function rerender(): void {
   refreshTheme();
   ReactDOM.render(
-    <Theme>
-      <LoadingScreen />
-    </Theme>,
+    <React.StrictMode>
+      <Theme>
+        <LoadingScreen />
+      </Theme>
+    </React.StrictMode>,
     document.getElementById("root"),
   );
 }
